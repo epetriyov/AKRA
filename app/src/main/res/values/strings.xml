@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AKRA</string>
+    <string name="label_format">Label: %s</string>
 </resources>

@@ -1,25 +1,27 @@
 package com.akra.example
 
-import android.support.test.runner.AndroidJUnit4
+import com.akra.example.model.Optional
 import com.akra.example.model.User
 import com.akra.example.services.CacheService
 import io.reactivex.observers.TestObserver
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
  * Created by Евгений on 8/28/2017.
  */
-@RunWith(AndroidJUnit4::class)
 class CacheServiceTest {
 
     @Test
     fun testSaveItem() {
         val cacheService = CacheService()
-        val user = User("", "")
-        val subscriber = TestObserver<User>()
+        val user = User("test", "test")
+        var subscriber = TestObserver<Optional<User?>>()
         cacheService.saveUser(user).flatMap { cacheService.getUser() }.subscribe(subscriber)
         subscriber.assertNoErrors()
-        subscriber.assertResult(user)
+        subscriber.assertResult(Optional(user))
+        subscriber = TestObserver<Optional<User?>>()
+        cacheService.saveUser(null).flatMap { cacheService.getUser() }.subscribe(subscriber)
+        subscriber.assertNoErrors()
+        subscriber.assertResult(Optional(null))
     }
 }
