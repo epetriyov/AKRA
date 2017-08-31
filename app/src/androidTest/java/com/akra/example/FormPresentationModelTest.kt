@@ -1,15 +1,16 @@
 package com.akra.example
 
 import android.support.test.InstrumentationRegistry
+import android.support.test.filters.SmallTest
 import android.support.test.runner.AndroidJUnit4
 import com.akra.example.user.form.FormInteractor
 import com.akra.example.user.form.FormPresentationModel
+import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when` as mockWhen
 
 /**
@@ -17,19 +18,22 @@ import org.mockito.Mockito.`when` as mockWhen
  */
 
 @RunWith(AndroidJUnit4::class)
+@SmallTest
 class FormPresentationModelTest {
 
     @Test
     fun testLoadLabel() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        var formInteractorMock = Mockito.mock(FormInteractor::class.java)
-        mockWhen(formInteractorMock.getFormLabel()).thenReturn(Observable.just(""))
-        val formPresentationModel = FormPresentationModel(formInteractorMock, context)
+        val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
+        val formInteractor = mock(FormInteractor::class.java)
+        mockWhen(formInteractor.getFormLabel()).thenReturn(Observable.just("0"))
+        val formPresentationModel = FormPresentationModel(formInteractor, context)
         val testSubscriber = TestObserver<String>()
         formPresentationModel.init()
         formPresentationModel.getLabelState().subscribe(testSubscriber)
+        testSubscriber.onComplete()
         testSubscriber.assertNoErrors()
-        testSubscriber.assertResult(context.resources.getString(R.string.label_format, ""))
-        verify(formInteractorMock).getFormLabel()
+        testSubscriber.assertResult("Label: 0")
+        verify(formInteractor).getFormLabel()
+
     }
 }

@@ -4,7 +4,6 @@ import android.content.Context
 import com.akra.example.services.CacheService
 import com.akra.example.user.UserInteractor
 import com.akra.example.user.UserPresentationModel
-import com.akra.example.user.action.ControllPresentationModel
 import com.akra.example.user.form.FormInteractor
 import com.akra.example.user.form.FormPresentationModel
 import dagger.Module
@@ -19,10 +18,6 @@ import dagger.Provides
 
     @Provides fun provideContext(): Context {
         return context
-    }
-
-    @Provides fun provideControllPresentationModel(): ControllPresentationModel {
-        return ControllPresentationModel()
     }
 
     @Provides fun provideFormPresentationModel(formInteractor: FormInteractor, context: Context): FormPresentationModel {
@@ -42,7 +37,7 @@ import dagger.Provides
         return UserInteractor(cacheService)
     }
 
-    @Provides fun provideModulesPresentationModel(): UserPresentationModel {
-        return UserPresentationModel()
+    @Provides fun provideModulesPresentationModel(userInteractor: UserInteractor): UserPresentationModel {
+        return UserPresentationModel(userInteractor)
     }
 }
