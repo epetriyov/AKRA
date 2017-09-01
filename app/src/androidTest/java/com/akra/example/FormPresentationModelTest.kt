@@ -28,7 +28,6 @@ class FormPresentationModelTest {
         mockWhen(formInteractor.getFormLabel()).thenReturn(Observable.just("0"))
         val formPresentationModel = FormPresentationModel(formInteractor, context)
         val testSubscriber = TestObserver<String>()
-        formPresentationModel.init()
         formPresentationModel.getLabelState().subscribe(testSubscriber)
         testSubscriber.onComplete()
         testSubscriber.assertNoErrors()

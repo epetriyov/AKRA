@@ -1,5 +1,6 @@
 package com.akra.example.user
 
+import android.text.TextUtils
 import com.akra.example.model.Optional
 import com.akra.example.model.User
 import com.akra.example.services.CacheService
@@ -21,7 +22,7 @@ class UserPresentationModel(var userInteractor: UserInteractor) {
         return userStateBehavior.hide()
     }
 
-    fun init() {
+    init {
         userInteractor.loadUser().subscribe(userStateBehavior).addTo(composite)
     }
 
@@ -30,12 +31,18 @@ class UserPresentationModel(var userInteractor: UserInteractor) {
     }
 
     fun saveUser(name: String, surname: String): Observable<Optional<User?>> {
-        if (userStateBehavior.value != null) {
-            userStateBehavior.value.value?.let {
-                userStateBehavior.value.value?.name = name
-                userStateBehavior.value.value?.surname = surname
-                return userInteractor.saveUser(userStateBehavior.value.value)
+        if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(surname)) {
+            var user = if (userStateBehavior.value.value == null) {
+                val us = User(name, surname)
+                userStateBehavior.accept(Optional<User?>(us))
+                us
+            } else {
+                val user = userStateBehavior.value.value!!
+                user.name = name
+                user.surname = surname
+                user
             }
+            return userInteractor.saveUser(user)
         }
         return Observable.just(Optional<User?>(null))
     }

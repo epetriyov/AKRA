@@ -2,6 +2,7 @@ package com.akra.example.user
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.text.TextUtils
 import com.akra.example.App
 import com.akra.example.R
 import com.akra.example.model.User
@@ -27,18 +28,11 @@ class UserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         App.instance.component.inject(this)
         setContentView(R.layout.act_main)
-        modulesPresentationModel.init()
         btnView.clicks()
-                .flatMap {
-                    Observable.combineLatest(
-                            formView.nameValue(),
-                            formView.surnameValue(),
-                            BiFunction<String, String, User>(::User))
-                }
-                .flatMap { (name, surname) -> modulesPresentationModel.saveUser(name, surname) }
+                .flatMap { modulesPresentationModel.saveUser(formView.nameValue(), formView.surnameValue()) }
                 .subscribe().addTo(composite)
         Observable.combineLatest(formView.nameChanges(), formView.surnameChanges(), BiFunction<String, String, User>(::User))
-                .map { (name, surname) -> name != null && surname != null }
+                .map { (name, surname) -> !TextUtils.isEmpty(name) && !TextUtils.isEmpty(surname) }
                 .subscribe(btnView.getEnableConsumer()).addTo(composite)
         modulesPresentationModel.getUserState()
                 .subscribe(formView.userConsumer()).addTo(composite)

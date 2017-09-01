@@ -17,9 +17,10 @@ class ControllView @JvmOverloads constructor(
 
     init {
         setText(R.string.save)
+        isEnabled = false
     }
 
     fun getEnableConsumer(): Consumer<in Boolean> {
-        return Consumer { enabled() }
+        return enabled()
     }
 }

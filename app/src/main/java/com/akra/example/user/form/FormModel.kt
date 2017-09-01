@@ -21,7 +21,7 @@ class FormPresentationModel(formInteractor: FormInteractor, context: Context) {
 
     private var formInteractor: FormInteractor = formInteractor
 
-    fun init() {
+    init {
         formInteractor.getFormLabel().subscribe(labelState).addTo(composite)
     }
 
